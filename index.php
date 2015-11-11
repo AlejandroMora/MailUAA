@@ -111,7 +111,7 @@
         <div id="section">
             <div id="recibidos"><h2>Recibidos</h2><hr>
                 <table width="95%" height="auto">
-                    <tr style=" background:#BDBDBD; color:white">
+                    <tr style=" background:#2b303b; color:white">
                         <td><b> Remitente </b></td>
                         <td><b> Asunto </b></td>
                         <td><b> Fecha </b></td>
@@ -135,7 +135,7 @@
 
             <div id="enviados"><h2>Enviados</h2><hr>
                 <table width="95%" height="auto"> <!-- CODIGO EN PHP -->
-                    <tr style=" background:#BDBDBD; color:white">
+                    <tr style=" background:#2b303b; color:white">
                         <td><b> Destinatario </b></td>
                         <td><b> Asunto </b></td>
                         <td><b> Fecha </b></td>
@@ -148,7 +148,7 @@
 
 		    <div id="papelera"><h2>Papelera</h2><hr>
 		        <table width="95%" height="auto"> <!-- CODIGO EN PHP -->
-		    	    <tr style=" background:#BDBDBD; color:white">
+		    	    <tr style=" background:#2b303b; color:white">
 		    		    <td><b> Remitente </b></td>
 		    		    <td><b> Asunto </b></td>
 		    		    <td><b> Destinatario </b></td>
