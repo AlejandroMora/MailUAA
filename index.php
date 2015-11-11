@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html>
     <head>
         <title>Formulario</title>
@@ -20,7 +20,7 @@
             nav:hover a div label{ left: 38%; }
             //---------------------------------------------------------------------
 	        tr{ background: #b8d1f3; }
-            tr:hover { background-color: #ffff99; }
+            tr:hover { background-color: #BDBDBD; color:#FFFFFF}
         </style>
 <?php
     //mysqli_query($conn, "CREATE TABLE `DATOSUSUARIOS` (name VARCHAR(30), last VARCHAR(30), birth DATETIME, sex CHAR(1), user VARCHAR(26), pass VARCHAR(16))");
@@ -36,10 +36,11 @@
 
     header('Content-Type: text/html; charset=ISO-8859-1');
     $db_host="us-cdbr-azure-southcentral-e.cloudapp.net";
-    $db_user="b0d0f954103534";
-    $db_pass="1020e98d";
-    $db_name="acsm_6fced1b02c81a57";
+    $db_user="b4ddc5a8a06088";
+    $db_pass="ce243693";
+    $db_name="acsm_fd504d999e3283b";
     $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
+    
 
     $query =  mysqli_query($conn, "SHOW TABLES");
     while ($row = mysqli_fetch_row($query)){ echo "<br>{$row[0]}"; 
@@ -54,7 +55,7 @@
     if(isset($_POST["register"])){
         if($_POST["user"]=="" || $_POST["pass1"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ echo "Te faltan campos por completar"; }
         elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}'"))>0 || !preg_match("/^[a-zA-Z ]*$/",$_POST["user"])){ echo "El usuario ya existe/Solo letras y espacios"; }
-        elseif($_POST["pass1"]!=$_POST["pass2"]){ echo "Las contraseñas no coinciden"; }
+        elseif($_POST["pass1"]!=$_POST["pass2"]){ echo "Las contraseÃ±as no coinciden"; }
         else{
                 mysqli_query($conn, "INSERT INTO `datosusuarios` (`name`, `last`, `sex`, `user`, `pass`) VALUES ('{$_POST['name']}', '{$_POST['last']}', '{$_POST['sex']}', '{$_POST['user']}', '{$_POST['pass1']}')");
                 mysqli_query($conn, "CREATE TABLE {$_POST["user"]} (`inf` VARCHAR(40), `ind` VARCHAR(19), `ins` VARCHAR(60), `int` TINYTEXT, `inm` TEXT, `outf` VARCHAR(40), `outd` VARCHAR(19), `outs` VARCHAR(60), `outt` TINYTEXT, `outm` TEXT, `delf` VARCHAR(40), `deld` VARCHAR(19), `dels` VARCHAR(60), `delt` TINYTEXT, `delm` TEXT)");
@@ -64,13 +65,14 @@
         mysqli_query($conn, "DELETE FROM `datosusuarios` WHERE user='{$_POST['user']}'");
         mysqli_query($conn, "DROP TABLE {$_POST['user']}");
     }
-    if(isset($_POST["send"])){ //date('Y-m-d H:i:s')
-        mysqli_query($conn, "INSERT INTO `{$_POST['user']}` (`outf`, `outs`, `outt`, `outm`) VALUES ('{$_POST['user']}', '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
-        mysqli_query($conn, "INSERT INTO `{$_POST['to']}` (`inf`, `ins`, `int`, `inm`) VALUES ('{$_POST['user']}','{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
+    if(isset($_POST["send"])){
+        $date=date('Y-m-d H:i:s');
+        mysqli_query($conn, "INSERT INTO `{$_POST['user']}` (`outf`, `outd`, `outs`, `outt`, `outm`) VALUES ('{$_POST['user']}', '$date', '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
+        mysqli_query($conn, "INSERT INTO `{$_POST['to']}` (`inf`, `ind`, `ins`, `int`, `inm`) VALUES ('{$_POST['user']}', '$date', '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
     }
-    if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))==0){
+    /*if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))==0){
         $_POST = array();
-    }
+    }*/
 ?>
     </head>
     <body><!--------------------------------------BODY------------------------------------------>
@@ -83,8 +85,8 @@
                 Sexo:   <input type="radio" name="sex" value="H" checked> Hombre
                         <input type="radio" name="sex" value="M"> Mujer<br><br>
                 Usuario: <input type="text" name="user"><br>
-                Contraseña: <input type="password" name="pass1"><br>
-                Confirmar contraseña: <input type="password" name="pass2"><br><br>
+                Contraseï¿½a: <input type="password" name="pass1"><br>
+                Confirmar contraseï¿½a: <input type="password" name="pass2"><br><br>
                 <input type="submit" name="cancel" value="Cancelar" onclick="location.href=".">
                 <input type="submit" name="register" value="Aceptar" id="ingresar" class="default"> <!--REGISTER-->
             </form>
@@ -93,7 +95,7 @@
 <?php   }elseif ($_POST["user"]!=""){ ?>
         <header><img src='https://siuaaxt.uaa.mx/siima/IMW_Mdi/recursos/imgs/login/logo.png' width='100px' height='40px' align='left'>
             <input type="search" id="search" placeholder="Buscar..." />
-            Bienvenido(a) <b> <?php echo $_POST["user"]; ?> </b>
+            Bienvenido(a)Â <b> <?php echo $_POST["user"]; ?>Â Â Â </b>
             <a href='#personalitation'><img src='<?php echo $sex=="H"?"http://cdn.flaticon.com/png/256/17797.png" : "http://cdn.flaticon.com/png/256/18014.png" ?>' width='40px' height='40px' align='right'/></a>
         </header>
 
@@ -158,7 +160,7 @@
 		    	</table>
 		    </div>
                         
-		    <div id="configuracion"><h2>Cambiar información personal</h2><hr>
+		    <div id="configuracion"><h2>Cambiar informaciï¿½n personal</h2><hr>
                 <br><br><h2>Otros recursos</h2><hr>
                 Eliminar cuenta: <input type="submit" value="Aceptar" name="del"><br>
 		    </div>
@@ -168,8 +170,8 @@
             <div id="home" align="center" style="top:50%; position:relative; transform: translateY(75%);">
                 <img src="https://siuaaxt.uaa.mx/siima/IMW_Mdi/recursos/imgs/login/logo.png"><br><br>
                 <form method="post">
-                    Usuario:       <input type="text" name="user" maxlength=26> <br><br>
-                    Contraseña:      <input type="password" name="pass"maxlength=16 ><br><br>
+                    Usuario:Â Â Â Â Â Â Â <input type="text" name="user" maxlength=26> <br><br>
+                    ContraseÃ±a:      <input type="password" name="pass"maxlength=16 ><br><br>
                     <input type="submit" name="signin" value="Registrar">
                     <input type="submit" name="login" value="Ingresar" class="default">
                 </form>
