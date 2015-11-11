@@ -21,7 +21,25 @@
             //---------------------------------------------------------------------
 	        tr{ background: #b8d1f3; }
             tr:hover { background-color: #BDBDBD; color:#FFFFFF}
+            table tr td a {
+    display:block;
+    height:100%;
+    width:100%;
+}
+table tr td {
+    padding-left: 0;
+    padding-right: 0;
+}
         </style>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('table tr').click(function(){
+                    window.location = $(this).data('href');
+                    return false;
+                });
+            });
+        </script>
 <?php
     //mysqli_query($conn, "CREATE TABLE `DATOSUSUARIOS` (name VARCHAR(30), last VARCHAR(30), birth DATETIME, sex CHAR(1), user VARCHAR(26), pass VARCHAR(16))");
     //mysqli_query($conn, "INSERT INTO DATOSUSUARIOS (name, last, sex, user, pass) VALUES ('$users', 'Mundo', 'H', 'Usuario', '****')");
@@ -61,7 +79,13 @@
                 mysqli_query($conn, "CREATE TABLE {$_POST["user"]} (`inf` VARCHAR(40), `ind` VARCHAR(19), `ins` VARCHAR(60), `int` TINYTEXT, `inm` TEXT, `outf` VARCHAR(40), `outd` VARCHAR(19), `outs` VARCHAR(60), `outt` TINYTEXT, `outm` TEXT, `delf` VARCHAR(40), `deld` VARCHAR(19), `dels` VARCHAR(60), `delt` TINYTEXT, `delm` TEXT)");
         }
     }
-    if(isset($_POST["del"])){
+    if(isset($_POST["update"])){
+        if($_POST["pass1"]!=$_POST["pass2"]){ echo "Las contraseñas no coinciden"; }
+        else{
+            mysqli_query($conn, "UPDATE `datosusuarios` SET name='{$_POST['name']}', last='{$_POST['last']}', pass='{$_POST['pass1']}' WHERE user='{$_POST['user']}'");
+        }
+    }
+    if(isset($_POST["delete"])){
         mysqli_query($conn, "DELETE FROM `datosusuarios` WHERE user='{$_POST['user']}'");
         mysqli_query($conn, "DROP TABLE {$_POST['user']}");
     }
@@ -85,8 +109,8 @@
                 Sexo:   <input type="radio" name="sex" value="H" checked> Hombre
                         <input type="radio" name="sex" value="M"> Mujer<br><br>
                 Usuario: <input type="text" name="user"><br>
-                Contrase�a: <input type="password" name="pass1"><br>
-                Confirmar contrase�a: <input type="password" name="pass2"><br><br>
+                Contraseña: <input type="password" name="pass1"><br>
+                Confirmar contraseña: <input type="password" name="pass2"><br><br>
                 <input type="submit" name="cancel" value="Cancelar" onclick="location.href=".">
                 <input type="submit" name="register" value="Aceptar" id="ingresar" class="default"> <!--REGISTER-->
             </form>
@@ -117,7 +141,7 @@
                         <td><b> Fecha </b></td>
                     </tr>
 <?php               $query=mysqli_query($conn, "SELECT `inf`, `ind`, `ins` FROM `{$_POST['user']}`");
-                    while($row = mysqli_fetch_assoc($query)) { echo "<tr><td>{$row['inf']}</td><td>{$row['ins']}</td><td>{$row['ind']}</td></tr>"; }
+                    while($row = mysqli_fetch_assoc($query)) { echo "<tr data-href='#nuevo'><td>{$row['inf']}</td><td>{$row['ins']}</td><td>{$row['ind']}</td></tr>"; }
 ?>
 		        </table>
 		    </div>
@@ -159,10 +183,23 @@
 ?>
 		    	</table>
 		    </div>
-                        
-		    <div id="configuracion"><h2>Cambiar informaci�n personal</h2><hr>
+            
+<?php       $row=mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `datosusuarios` WHERE user='{$_POST['user']}'")); ?>
+		    <div id="configuracion"><h2>Cambiar información personal</h2><hr>
+                <form method="post">
+                    Nombre(s): <input type="text" name="name" value="<?php echo $row["name"]; ?>"><br>
+                    Apellido(s): <input type="text" name="last" value="<?php echo $row["last"]; ?>"><br>
+                    Fecha de nacimiento: <input type="date" name="birth"><br>
+                    Contraseña: <input type="password" name="pass1"><br>
+                    Confirmar contraseña: <input type="password" name="pass2"><br><br>
+                    <input type="submit" name="cancel" value="Cancelar" onclick="location.href=".">
+                    <input type="submit" name="update" value="Aceptar" id="ingresar" class="default"> <!--REGISTER-->
+                </form>
                 <br><br><h2>Otros recursos</h2><hr>
-                Eliminar cuenta: <input type="submit" value="Aceptar" name="del"><br>
+                <form method="post">
+                    <input type="hidden" name="user" value="<?php echo $_POST["user"]; ?>">
+                    Eliminar cuenta: <input type="submit" value="Aceptar" name="delete"><br>
+                </form>
 		    </div>
         </div>
 
