@@ -63,31 +63,41 @@ table tr td {
     /*$query =  mysqli_query($conn, "SHOW TABLES");
     while ($row = mysqli_fetch_row($query)){ echo "<br>{$row[0]}"; 
         $resp = mysqli_query($conn, "SELECT * FROM {$row[0]}");
-        while($fila = mysqli_fetch_assoc($resp)){ echo "inf: ".$fila['inf']." ind: ".$fila['ind']." ins: ".$fila['ins']." int: ".$fila['int']." inm: ".$fila['inm']." outf: {$fila['outf']} outd: {$fila['outd']} outs: {$fila['outs']} outt: {$fila['outt']} outm: {$fila['outm']} delf: {$fila['delf']} deld: {$fila['deld']} dels: {$fila['dels']} delt: {$fila['delt']} delm: {$fila['delm']}";}
-    }*/
+        while($fila = mysqli_fetch_assoc($resp)){ echo "<br>inf: ".$fila['inf']." ind: ".$fila['ind']." ins: ".$fila['ins']." int: ".$fila['int']." inm: ".$fila['inm']." outf: {$fila['outf']} outd: {$fila['outd']} outs: {$fila['outs']} outt: {$fila['outt']} outm: {$fila['outm']} delf: {$fila['delf']} deld: {$fila['deld']} dels: {$fila['dels']} delt: {$fila['delt']} delm: {$fila['delm']}";}
+    }
     
-    /*$query=mysqli_query($conn,"SELECT * FROM `datosusuarios`");
+    $query=mysqli_query($conn,"SELECT * FROM `datosusuarios`");
     while($row = mysqli_fetch_assoc($query)) {
         echo "<br>Nombre: {$row["name"]} - Apellido: {$row["last"]} - Sexo: {$row["sex"]} - Usuario: {$row["user"]} - Password: {$row["pass"]}";
     }*/
     if(isset($_POST["register"])){
-        if($_POST["user"]=="" || $_POST["pass1"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ echo "Te faltan campos por completar"; }
-        elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}'"))>0 || !preg_match("/^[a-zA-Z ]*$/",$_POST["user"])){ echo "El usuario ya existe/Solo letras y espacios"; }
-        elseif($_POST["pass1"]!=$_POST["pass2"]){ echo "Las contraseñas no coinciden"; }
+        if(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}'"))>0){ $err="El usuario ya existe"; }
+        elseif(!preg_match("/^[a-zA-Z]*$/",$_POST["user"])){ $err="Tu usuario no puede contener espacios"; }
+        elseif(!preg_match("/^[a-zA-Z ]*$/",$_POST["name"]) || !preg_match("/^[a-zA-Z ]*$/",$_POST["last"])){ $err="Tanto tu nombre como tu apellido no pueden contener carácteres especiales"; }
+        elseif($_POST["user"]=="" || $_POST["pass"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ $err="Te faltan campos por completar"; }
+        elseif($_POST["pass"]!=$_POST["pass2"]){ $err="Las contraseñas no coinciden"; }
         else{
-                mysqli_query($conn, "INSERT INTO `datosusuarios` (`name`, `last`, `sex`, `user`, `pass`) VALUES ('{$_POST['name']}', '{$_POST['last']}', '{$_POST['sex']}', '{$_POST['user']}', '{$_POST['pass1']}')");
-                mysqli_query($conn, "CREATE TABLE {$_POST["user"]} (`inf` VARCHAR(40), `ind` VARCHAR(19), `ins` VARCHAR(60), `int` TINYTEXT, `inm` TEXT, `outf` VARCHAR(40), `outd` VARCHAR(19), `outs` VARCHAR(60), `outt` TINYTEXT, `outm` TEXT, `delf` VARCHAR(40), `deld` VARCHAR(19), `dels` VARCHAR(60), `delt` TINYTEXT, `delm` TEXT)");
+            mysqli_query($conn, "INSERT INTO `datosusuarios` (`name`, `last`, `sex`, `user`, `pass`) VALUES ('{$_POST['name']}', '{$_POST['last']}', '{$_POST['sex']}', '{$_POST['user']}', '{$_POST['pass']}')");
+            mysqli_query($conn, "CREATE TABLE {$_POST["user"]} (`inf` VARCHAR(40), `ind` VARCHAR(19), `ins` VARCHAR(60), `int` TINYTEXT, `inm` TEXT, `outf` VARCHAR(40), `outd` VARCHAR(19), `outs` VARCHAR(60), `outt` TINYTEXT, `outm` TEXT, `delf` VARCHAR(40), `deld` VARCHAR(19), `dels` VARCHAR(60), `delt` TINYTEXT, `delm` TEXT)");
+            $err="";
         }
     }
     if(isset($_POST["update"])){
-        if($_POST["pass1"]!=$_POST["pass2"]){ echo "Las contraseñas no coinciden"; }
+        if(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}'"))>0){ $err="El usuario ya existe"; }
+        elseif(!preg_match("/^[a-zA-Z]*$/",$_POST["user"])){ $err="Tu usuario no puede contener espacios"; }
+        elseif(!preg_match("/^[a-zA-Z ]*$/",$_POST["name"]) || !preg_match("/^[a-zA-Z ]*$/",$_POST["last"])){ $err="Tanto tu nombre como tu apellido no pueden contener carácteres especiales"; }
+        elseif($_POST["user"]=="" || $_POST["pass"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ $err="Te faltan campos por completar"; }
+        elseif($_POST["pass"]!=$_POST["pass2"]){ $err="Las contraseñas no coinciden"; }
         else{
-            mysqli_query($conn, "UPDATE `datosusuarios` SET name='{$_POST['name']}', last='{$_POST['last']}', pass='{$_POST['pass1']}' WHERE user='{$_POST['user']}'");
+            mysqli_query($conn, "UPDATE `datosusuarios` SET name='{$_POST['name']}', last='{$_POST['last']}', pass='{$_POST['pass']}' WHERE user='{$_POST['user']}'");
+            $err="";
         }
     }
     if(isset($_POST["delete"])){
-        mysqli_query($conn, "DELETE FROM `datosusuarios` WHERE user='{$_POST['user']}'");
         mysqli_query($conn, "DROP TABLE {$_POST['user']}");
+        mysqli_query($conn, "DELETE FROM `datosusuarios` WHERE user='{$_POST['user']}'");
+        unset($_POST);
+        $_POST = array();
     }
     if(isset($_POST["send"])){
         $date=date('Y-m-d H:i:s');
@@ -100,7 +110,7 @@ table tr td {
 ?>
     </head>
     <body><!--------------------------------------BODY------------------------------------------>
-<?php   if(isset($_POST["signin"])){ ?>
+<?php   if(isset($_POST["signin"]) || $err!=""){ ?>
         <div text-align="left">
             <form method="post">
                 Nombre(s): <input type="text" name="name"><br>
@@ -109,14 +119,15 @@ table tr td {
                 Sexo:   <input type="radio" name="sex" value="H" checked> Hombre
                         <input type="radio" name="sex" value="M"> Mujer<br><br>
                 Usuario: <input type="text" name="user"><br>
-                Contraseña: <input type="password" name="pass1"><br>
-                Confirmar contraseña: <input type="password" name="pass2"><br><br>
+                Contraseña: <input type="password" name="pass"><br>
+                Confirmar contraseña: <input type="password" name="pass2"><br>
+                <p style="color:red"><?php echo $err; ?></p>
                 <input type="submit" name="cancel" value="Cancelar" onclick="location.href=".">
                 <input type="submit" name="register" value="Aceptar" id="ingresar" class="default"> <!--REGISTER-->
             </form>
         </div>
 
-<?php   }elseif ($_POST["user"]!=""){ ?>
+<?php   }elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))>0){ ?>
         <header><img src='https://siuaaxt.uaa.mx/siima/IMW_Mdi/recursos/imgs/login/logo.png' width='100px' height='40px' align='left'>
             <input type="search" id="search" placeholder="Buscar..." />
             Bienvenido(a) <b> <?php echo $_POST["user"]; ?>   </b>
@@ -140,7 +151,7 @@ table tr td {
                         <td><b> Asunto </b></td>
                         <td><b> Fecha </b></td>
                     </tr>
-<?php               $query=mysqli_query($conn, "SELECT `inf`, `ind`, `ins` FROM `{$_POST['user']}`");
+<?php               $query=mysqli_query($conn, "SELECT `inf`, `ind`, `ins` FROM `{$_POST['user']}` WHERE NOT ind=''");
                     while($row = mysqli_fetch_assoc($query)) { echo "<tr data-href='#nuevo'><td>{$row['inf']}</td><td>{$row['ins']}</td><td>{$row['ind']}</td></tr>"; }
 ?>
 		        </table>
@@ -164,7 +175,7 @@ table tr td {
                         <td><b> Asunto </b></td>
                         <td><b> Fecha </b></td>
                     </tr>
-<?php       $query=mysqli_query($conn,"SELECT `outd`, `outs`, `outt` FROM `{$_POST['user']}`");
+<?php       $query=mysqli_query($conn,"SELECT `outd`, `outs`, `outt` FROM `{$_POST['user']}` WHERE NOT outd=''");
             while($row = mysqli_fetch_assoc($query)) { echo"<tr><td>{$row['outt']}</td><td>{$row['outs']}</td><td>{$row['outd']}</td></tr>"; }
 ?>
 		    	</table>
@@ -178,7 +189,7 @@ table tr td {
 		    		    <td><b> Destinatario </b></td>
 		    		    <td><b> Fecha </b></td>
 		    		</tr>
-<?php       $query=mysqli_query($conn,"SELECT `delf`, `deld`, `dels`, `delt` FROM ".$_POST["user"]);
+<?php       $query=mysqli_query($conn,"SELECT `delf`, `deld`, `dels`, `delt` FROM `{$_POST['user']}` WHERE NOT deld=''");
             while($row = mysqli_fetch_assoc($query)) { echo"<tr><td>".$row["delf"]."</td><td>".$row["dels"]."</td><td>".$row["delt"]."</td><td>".$row["deld"]."</td></tr>"; }
 ?>
 		    	</table>
@@ -190,15 +201,16 @@ table tr td {
                     Nombre(s): <input type="text" name="name" value="<?php echo $row["name"]; ?>"><br>
                     Apellido(s): <input type="text" name="last" value="<?php echo $row["last"]; ?>"><br>
                     Fecha de nacimiento: <input type="date" name="birth"><br>
-                    Contraseña: <input type="password" name="pass1"><br>
-                    Confirmar contraseña: <input type="password" name="pass2"><br><br>
-                    <input type="submit" name="cancel" value="Cancelar" onclick="location.href=".">
+                    Contraseña: <input type="password" name="pass"><br>
+                    Confirmar contraseña: <input type="password" name="pass2"><br>
+                    <p style="color:red"><?php echo $err; ?></p>
+                    <input type="submit" name="cancel" value="Cancelar" onclick="location.href='.'">
                     <input type="submit" name="update" value="Aceptar" id="ingresar" class="default"> <!--REGISTER-->
                 </form>
                 <br><br><h2>Otros recursos</h2><hr>
                 <form method="post">
                     <input type="hidden" name="user" value="<?php echo $_POST["user"]; ?>">
-                    Eliminar cuenta: <input type="submit" value="Aceptar" name="delete"><br>
+                    Eliminar cuenta: <input type="submit" value="Aceptar" name="delete" onclick="location.href='.'""><br>
                 </form>
 		    </div>
         </div>
