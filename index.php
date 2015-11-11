@@ -42,16 +42,16 @@
     $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
     
 
-    $query =  mysqli_query($conn, "SHOW TABLES");
+    /*$query =  mysqli_query($conn, "SHOW TABLES");
     while ($row = mysqli_fetch_row($query)){ echo "<br>{$row[0]}"; 
         $resp = mysqli_query($conn, "SELECT * FROM {$row[0]}");
         while($fila = mysqli_fetch_assoc($resp)){ echo "inf: ".$fila['inf']." ind: ".$fila['ind']." ins: ".$fila['ins']." int: ".$fila['int']." inm: ".$fila['inm']." outf: {$fila['outf']} outd: {$fila['outd']} outs: {$fila['outs']} outt: {$fila['outt']} outm: {$fila['outm']} delf: {$fila['delf']} deld: {$fila['deld']} dels: {$fila['dels']} delt: {$fila['delt']} delm: {$fila['delm']}";}
-    }
+    }*/
     
-    $query=mysqli_query($conn,"SELECT * FROM `datosusuarios`");
+    /*$query=mysqli_query($conn,"SELECT * FROM `datosusuarios`");
     while($row = mysqli_fetch_assoc($query)) {
         echo "<br>Nombre: {$row["name"]} - Apellido: {$row["last"]} - Sexo: {$row["sex"]} - Usuario: {$row["user"]} - Password: {$row["pass"]}";
-    }
+    }*/
     if(isset($_POST["register"])){
         if($_POST["user"]=="" || $_POST["pass1"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ echo "Te faltan campos por completar"; }
         elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}'"))>0 || !preg_match("/^[a-zA-Z ]*$/",$_POST["user"])){ echo "El usuario ya existe/Solo letras y espacios"; }
