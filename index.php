@@ -3,109 +3,24 @@
     <head>
         <title>Formulario</title>
         <style type='text/css' rel='stylesheet'>
-            body {
-                width: 100%;
-                height: 100%;
-                margin: 0px;
-                font-family: Tahoma;
-            }
-            .menu {
-                height: 32px;  
-                width: 32px;
-                padding: 8px;
-            }
-            form {
-                text-align: center;
-            }
-            input[type=submit], input[type=reset] {
-                border-radius: 5px;
-                border: 0;
-                width: 80px;
-                height: 25px;
-            }
-            .default {
-                background-color: #f0a54a;
-            }
-            header {
-                background-color: #e8e8e8;
-                text-align: right;
-                overflow: hidden;
-                padding: 10px;
-                position: absolute;
-                z-index: 100;
-                top: 0;
-                left: 0;
-                right: 0;
-                width: auto;
-                height: 6%;
-            }
-            #search {
-                width: 300px;
-                height: 40px;
-                background: #2b303b;
-                color: #63717f;
-                border: none;
-                font-size: 10pt;
-                padding-left: 15px;
-                margin-right: 25px;
-            }
-            #section {
-                position: fixed;
-                left: 7%;
-                top: 8%;
-                z-index: 98;
-                border: 1% solid gray;
-                border-radius: 1%;
-                text-align: center;
-                overflow: hidden;
-                height: 90%;
-                width: 92.4%;
-            }
-            #nuevo, #recibidos, #enviados, #papelera, #configuracion{
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                display: block;
-                padding: 2%;
-            }
+            body { width:100%; height:100%; margin:0px; font-family:Tahoma; }
+            .menu { width:32px; height:32px; padding:8px; }
+            form { text-align:center; }
+            input[type=submit], input[type=reset] { width:80px; height:25px; border-radius:5px; border:0; }
+            .default { background-color:#f0a54a; }
+            header { width:auto; height:6%; text-align:right; padding:10px; background-color:#e8e8e8; overflow:hidden; position:absolute; z-index:100; top:0; left:0; right:0; }
+            #search { width:300px; height:40px; background:#2b303b; color:#63717f; border:none; font-size:10pt; padding-left:15px; margin-right:25px; }
+            #section { width:92.4%; height:90%; text-align:center; position:fixed; left:7%; top:8%; z-index:98; border:1% solid gray; border-radius:1%; overflow:hidden; }
+            #nuevo, #recibidos, #enviados, #papelera, #configuracion{ width:100%; height:100%; overflow:auto; display:block; padding:2%; }
             //----------------------------------------------------------------------
-            a div {
-                display: flex;
-                text-decoration: none;
-            }
-            nav {
-                position: fixed;
-                top: 7%;
-                bottom: 0;
-                left: 0;
-                height: auto;
-                width: 5%;
-                transition-duration: 0.5s;
-                background-color: #e8e8e8;
-                padding: 1%;
-                z-index: 99;
-                box-shadow: 4px 0 6px -2px black;
-                overflow-x: hidden;
-            }
-            nav:hover  {
-                width: 16%;
-            }
-            div label{
-                transform:translateY(75%);
-                position: absolute;
-                color: black;
-                left: -200%;
-            }
-            nav:hover a div label{
-                left: 38%;
-            }
+            a div { display:flex; text-decoration:none; }
+            nav { width:5%; height:auto; top:7%; bottom:0; left:0; position:fixed; transition-duration:0.5s; background-color:#e8e8e8; padding:1%; z-index:99; box-shadow:4px 0 6px -2px black; overflow-x:hidden; }
+            nav:hover  { width: 16%; }
+            div label{ transform:translateY(75%); position: absolute; color: black; left: -200%; }
+            nav:hover a div label{ left: 38%; }
             //---------------------------------------------------------------------
-	        tr{
-		        background: #b8d1f3;
-	        }
-            tr:hover {
-                background-color: #ffff99;
-            }
+	        tr{ background: #b8d1f3; }
+            tr:hover { background-color: #ffff99; }
         </style>
 <?php
     //mysqli_query($conn, "CREATE TABLE `DATOSUSUARIOS` (name VARCHAR(30), last VARCHAR(30), birth DATETIME, sex CHAR(1), user VARCHAR(26), pass VARCHAR(16))");
@@ -121,21 +36,23 @@
 
     header('Content-Type: text/html; charset=ISO-8859-1');
     $db_host="us-cdbr-azure-southcentral-e.cloudapp.net";
-    $db_name="acsm_6fced1b02c81a57";
     $db_user="b0d0f954103534";
     $db_pass="1020e98d";
+    $db_name="acsm_6fced1b02c81a57";
     $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
     $query =  mysqli_query($conn, "SHOW TABLES");
-    while ($row = mysqli_fetch_row($query)) {
-        echo "<br>".$row[0];
+    while ($row = mysqli_fetch_row($query)){ echo "<br>{$row[0]}"; 
+        $resp = mysqli_query($conn, "SELECT * FROM {$row[0]}");
+        while($fila = mysqli_fetch_assoc($resp)){ echo "inf: ".$fila['inf']." ind: ".$fila['ind']." ins: ".$fila['ins']." int: ".$fila['int']." inm: ".$fila['inm']." outf: {$fila['outf']} outd: {$fila['outd']} outs: {$fila['outs']} outt: {$fila['outt']} outm: {$fila['outm']} delf: {$fila['delf']} deld: {$fila['deld']} dels: {$fila['dels']} delt: {$fila['delt']} delm: {$fila['delm']}";}
     }
+    
     $query=mysqli_query($conn,"SELECT * FROM `datosusuarios`");
     while($row = mysqli_fetch_assoc($query)) {
-        echo "<br>Nombre: ".$row["name"]." - Apellido: ".$row["last"]." - Sexo: ".$row["sex"]." - Usuario: ".$row["user"]." - Password: ".$row["pass"];
+        echo "<br>Nombre: {$row["name"]} - Apellido: {$row["last"]} - Sexo: {$row["sex"]} - Usuario: {$row["user"]} - Password: {$row["pass"]}";
     }
     if(isset($_POST["register"])){
-        if($_POST["user"]=="" || $_POST["pass"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ echo "Te faltan campos por completar"; }
+        if($_POST["user"]=="" || $_POST["pass1"]=="" || $_POST["name"]=="" || $_POST["last"]==""){ echo "Te faltan campos por completar"; }
         elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}'"))>0 || !preg_match("/^[a-zA-Z ]*$/",$_POST["user"])){ echo "El usuario ya existe/Solo letras y espacios"; }
         elseif($_POST["pass1"]!=$_POST["pass2"]){ echo "Las contraseñas no coinciden"; }
         else{
@@ -145,15 +62,14 @@
     }
     if(isset($_POST["del"])){
         mysqli_query($conn, "DELETE FROM `datosusuarios` WHERE user='{$_POST['user']}'");
-        mysqli_query($conn, "DROP TABLE {$_POST["user"]}");
+        mysqli_query($conn, "DROP TABLE {$_POST['user']}");
     }
-    if(isset($_POST["send"])){
-        mysqli_query($conn, "INSERT INTO {$_POST["user"]} (`outf`, `outd`, `outs`, `outt`, `outm`) VALUES ('{$_POST['user']}', date('Y-m-d H:i:s'), '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
-        mysqli_query($conn, "INSERT INTO {$_POST["to"]} (`inf`, `ind`, `ins`, `int`, `inm`) VALUES ('{$_POST['user']}', date('Y-m-d H:i:s'), '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
+    if(isset($_POST["send"])){ //date('Y-m-d H:i:s')
+        mysqli_query($conn, "INSERT INTO `{$_POST['user']}` (`outf`, `outs`, `outt`, `outm`) VALUES ('{$_POST['user']}', '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
+        mysqli_query($conn, "INSERT INTO `{$_POST['to']}` (`inf`, `ins`, `int`, `inm`) VALUES ('{$_POST['user']}','{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
     }
-    if(isset($_POST["logout"]) || (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))==0)){
+    if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))==0){
         $_POST = array();
-        header("Location: .");
     }
 ?>
     </head>
@@ -198,8 +114,8 @@
                         <td><b> Asunto </b></td>
                         <td><b> Fecha </b></td>
                     </tr>
-<?php               $query=mysqli_query($conn, "SELECT `inf`, `ind`, `ins`, FROM '{$_POST["user"]}'");
-                    while($row = mysqli_fetch_assoc($query)) { echo"<tr><td>'{$row["inf"]}'</td><td>'{$row["ins"]}'</td><td>'{$row["ind"]}'</td></tr>"; }
+<?php               $query=mysqli_query($conn, "SELECT `inf`, `ind`, `ins` FROM `{$_POST['user']}`");
+                    while($row = mysqli_fetch_assoc($query)) { echo "<tr><td>{$row['inf']}</td><td>{$row['ins']}</td><td>{$row['ind']}</td></tr>"; }
 ?>
 		        </table>
 		    </div>
@@ -209,6 +125,7 @@
                     Para:<br><input type="text" name="to" style="width:90%;"><br>
                     Asunto:<br><input type="text" name="subject" style="width:90%;"><br><br>
                     Mensaje:<br><textarea name="message" rows=12 style="width:90%;"></textarea><br><br>
+                    <input type="hidden" name="user" value="<?php echo $_POST["user"]; ?>">
                     <input type="reset" value="Limpiar">
                     <input type="submit" value="Enviar" class="default" name="send"><br><br><br><br>
                 </form>
@@ -221,8 +138,8 @@
                         <td><b> Asunto </b></td>
                         <td><b> Fecha </b></td>
                     </tr>
-<?php       $query=mysqli_query($conn,"SELECT `outd`, `outs`, `outt` FROM ".$_POST["user"]);
-            while($row = mysqli_fetch_assoc($query)) { echo"<tr><td>'{$row["outt"]}'</td><td>'{$row["outs"]}'</td><td>'{$row["outd"]}'</td></tr>"; }
+<?php       $query=mysqli_query($conn,"SELECT `outd`, `outs`, `outt` FROM `{$_POST['user']}`");
+            while($row = mysqli_fetch_assoc($query)) { echo"<tr><td>{$row['outt']}</td><td>{$row['outs']}</td><td>{$row['outd']}</td></tr>"; }
 ?>
 		    	</table>
 		    </div>
