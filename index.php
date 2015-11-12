@@ -11,7 +11,7 @@
             header { width:auto; height:6%; text-align:right; padding:10px; background-color:#e8e8e8; overflow:hidden; position:absolute; z-index:100; top:0; left:0; right:0; }
             #search { width:300px; height:40px; background:#2b303b; color:#63717f; border:none; font-size:10pt; padding-left:15px; margin-right:25px; }
             #section { width:92.4%; height:90%; text-align:center; position:fixed; left:7%; top:8%; z-index:98; border:1% solid gray; border-radius:1%; overflow:hidden; }
-            #nuevo, #recibidos, #enviados, #papelera, #configuracion{ width:100%; height:100%; overflow:auto; display:block; padding:2%; }
+            #nuevo, #visualizar, #recibidos, #enviados, #papelera, #configuracion{ width:100%; height:100%; overflow:auto; display:block; padding:2%; }
             //----------------------------------------------------------------------
             a div { display:flex; text-decoration:none; }
             nav { width:5%; height:auto; top:7%; bottom:0; left:0; position:fixed; transition-duration:0.5s; background-color:#e8e8e8; padding:1%; z-index:99; box-shadow:4px 0 6px -2px black; overflow-x:hidden; }
@@ -21,22 +21,12 @@
             //---------------------------------------------------------------------
 	        tr{ background: #b8d1f3; }
             tr:hover { background-color: #BDBDBD; color:#FFFFFF}
-            table tr td a {
-    display:block;
-    height:100%;
-    width:100%;
-}
-table tr td {
-    padding-left: 0;
-    padding-right: 0;
-}
         </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script>
             $(document).ready(function(){
                 $('table tr').click(function(){
-                    window.location = $(this).data('href');
-                    return false;
+                    window.location = $(this).attr('href');
                 });
             });
         </script>
@@ -99,6 +89,9 @@ table tr td {
         unset($_POST);
         $_POST = array();
     }
+    if(isset($_GET["user"])){
+        $_POST["user"]=$_GET["user"];
+    }
     if(isset($_POST["send"])){
         $date=date('Y-m-d H:i:s');
         mysqli_query($conn, "INSERT INTO `{$_POST['user']}` (`outf`, `outd`, `outs`, `outt`, `outm`) VALUES ('{$_POST['user']}', '$date', '{$_POST['subject']}', '{$_POST['to']}', '{$_POST['message']}')");
@@ -111,11 +104,11 @@ table tr td {
     </head>
     <body><!--------------------------------------BODY------------------------------------------>
 <?php   if(isset($_POST["signin"]) || $err!=""){ ?>
-        <div text-align="left">
+        <div text-align="left"><br><br><br><br><h1 align="center">Registro</h1><br><br>
             <form method="post">
                 Nombre(s): <input type="text" name="name"><br>
                 Apellido(s): <input type="text" name="last"><br>
-                Fecha de nacimiento: <input type="date" name="birth"><br>
+                    Fecha de nacimiento: <input type="date" name="birth" min="1940-01-01" max="2002-12-31"><br>
                 Sexo:   <input type="radio" name="sex" value="H" checked> Hombre
                         <input type="radio" name="sex" value="M"> Mujer<br><br>
                 Usuario: <input type="text" name="user"><br>
@@ -127,7 +120,7 @@ table tr td {
             </form>
         </div>
 
-<?php   }elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))>0){ ?>
+<?php   }elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))>0 || $_GET["user"]!=""){ ?>
         <header><img src='https://siuaaxt.uaa.mx/siima/IMW_Mdi/recursos/imgs/login/logo.png' width='100px' height='40px' align='left'>
             <input type="search" id="search" placeholder="Buscar..." />
             Bienvenido(a) <b> <?php echo $_POST["user"]; ?>   </b>
@@ -152,10 +145,17 @@ table tr td {
                         <td><b> Fecha </b></td>
                     </tr>
 <?php               $query=mysqli_query($conn, "SELECT `inf`, `ind`, `ins` FROM `{$_POST['user']}` WHERE NOT ind=''");
-                    while($row = mysqli_fetch_assoc($query)) { echo "<tr data-href='#nuevo'><td>{$row['inf']}</td><td>{$row['ins']}</td><td>{$row['ind']}</td></tr>"; }
+                    while($row = mysqli_fetch_assoc($query)) { echo "<tr href='?user={$_POST['user']}&ind={$row['ind']}#visualizar'><td>{$row['inf']}</td><td>{$row['ins']}</td><td>{$row['ind']}</td></tr>"; }
 ?>
 		        </table>
 		    </div>
+
+            <div id="visualizar"><h2></h2><hr><div align="left">
+<?php           $row=mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `{$_POST["user"]}` WHERE ind='{$_GET['ind']}'")); 
+                echo "<br><b>De: </b>".$row['inf']."<br><b>Fecha: </b>".$row['ind']."<br><b>Asunto: </b>".$row['ins']."<br><b>Para: </b>".$row['int']."<br><b>Mensaje: </b>".$row['inm'];
+?>
+                </div>
+            </div>
 
             <div id="nuevo"><h2>Enviar a:</h2><hr>
                 <form method="post">
@@ -200,7 +200,7 @@ table tr td {
                 <form method="post">
                     Nombre(s): <input type="text" name="name" value="<?php echo $row["name"]; ?>"><br>
                     Apellido(s): <input type="text" name="last" value="<?php echo $row["last"]; ?>"><br>
-                    Fecha de nacimiento: <input type="date" name="birth"><br>
+                    Fecha de nacimiento: <input type="date" name="birth" min="1940-01-01" max="2002-12-31"><br>
                     Contraseña: <input type="password" name="pass"><br>
                     Confirmar contraseña: <input type="password" name="pass2"><br>
                     <p style="color:red"><?php echo $err; ?></p>
