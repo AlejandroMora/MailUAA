@@ -84,7 +84,11 @@
         }
     }
     if(isset($_POST["trash"])){
-        //mysqli_query($conn, "UPDATE `{$_POST['user']}` SET inf='{$_POST['name']}', last='{$_POST['last']}', pass='{$_POST['pass']}' WHERE user='{$_POST['user']}'");
+        /*$row=mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM {$_POST['user']} WHERE ind={$_GET['ind']} OR outd={$_GET['outd']}"));
+        mysqli_query($conn, "UPDATE `{$_POST['user']}` SET delf='{$row['inf']}', deld='{$row['ind']}', dels='{$row['ins']}', delt='{$row['int']}', delm='{$row['inm']}' WHERE ind='{$_GET['ind']}'");
+        mysqli_query($conn, "UPDATE `{$_POST['user']}` SET delf='{$row['outf']}', deld='{$row['outd']}', dels='{$row['outs']}', delt='{$row['outt']}', delm='{$row['outm']}' WHERE outd='{$_GET['outd']}'");
+        mysqli_query($conn, "UPDATE `{$_POST['user']}` SET inf='', ind='', ins='', int='', inm='' WHERE ind='{$_GET['ind']}'");
+        mysqli_query($conn, "UPDATE `{$_POST['user']}` SET outf='', outd='', outs='', outt='', outm='' WHERE outd='{$_GET['out']}'");*/
     }
     if(isset($_POST["delete"])){
         mysqli_query($conn, "DROP TABLE {$_POST['user']}");
@@ -123,7 +127,7 @@
             </form>
         </div>
 
-<?php   }elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))>0 || $_GET["user"]!=""){ ?>
+<?php   }elseif(mysqli_num_rows(mysqli_query($conn, "SELECT `user` FROM `datosusuarios` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))>0 || $_REQUEST["user"]!=""){ ?>
         <header><img src='https://siuaaxt.uaa.mx/siima/IMW_Mdi/recursos/imgs/login/logo.png' width='100px' height='40px' align='left'>
             <input type="search" id="search" placeholder="Buscar..." />
             Bienvenido(a) <b> <?php echo $_POST["user"]; ?>   </b>
@@ -155,10 +159,12 @@
 
             <div id="visualizar"><h2></h2><hr><div align="left">
                 <form method="post">
-                    <input type="hidden" name="" value="<?php echo $_POST["user"]; ?>">
-                    <!--<input type="submit" name="trash" value="Eliminar">
+                    <!-- <input type="hidden" name="" value="
+<?php /*echo $_POST["user"]; */?>
+                    <!--"> 
+                    <input type="submit" name="trash" value="Eliminar">
                     <input type="submit" name="reenv" value="Reenviar">
-                    <input type="submit" name="resp" value="Responder">-->
+                    <input type="submit" name="resp" value="Responder"> -->
                 </form>
 <?php           $row=mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `{$_POST["user"]}` WHERE ind='{$_GET['ind']}'")); 
                 echo "<br><b>De: </b>".$row['inf']."<br><b>Fecha: </b>".$row['ind']."<br><b>Asunto: </b>".$row['ins']."<br><b>Para: </b>".$row['int']."<br><b>Mensaje: </b>".$row['inm'];
@@ -185,7 +191,7 @@
                         <td><b> Fecha </b></td>
                     </tr>
 <?php       $query=mysqli_query($conn,"SELECT `outd`, `outs`, `outt` FROM `{$_POST['user']}` WHERE NOT outd=''");
-            while($row = mysqli_fetch_assoc($query)) { echo"<tr><td>{$row['outt']}</td><td>{$row['outs']}</td><td>{$row['outd']}</td></tr>"; }
+            while($row = mysqli_fetch_assoc($query)) { echo"<tr href='?user={$_POST['user']}&outd={$row['outd']}#visualizar'><td>{$row['outt']}</td><td>{$row['outs']}</td><td>{$row['outd']}</td></tr>"; }
 ?>
 		    	</table>
 		    </div>
